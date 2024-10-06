@@ -1,33 +1,28 @@
 package org.example.taskmanagementsystem.service;
 
+import org.example.taskmanagementsystem.model.Employee;
 import org.example.taskmanagementsystem.model.Task;
-
 import org.example.taskmanagementsystem.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TaskService {
 
-    private TaskRepository taskRepository;
-
     @Autowired
-    public TaskService(TaskRepository taskRepository) {
-        this.taskRepository = taskRepository;
-    }
+    private TaskRepository taskRepository;
 
     public List<Task> getAllTasks() {
         return taskRepository.findAll();
     }
 
-    public Optional<Task> getTaskById(Long id) {
-        return taskRepository.findById(id);
+    public Task getTaskById(Long id) {
+        return taskRepository.findById(id).orElse(null);
     }
 
-    public Task createTask(Task task) {
+    public Task saveTask(Task task) {
         return taskRepository.save(task);
     }
 
@@ -35,20 +30,18 @@ public class TaskService {
         taskRepository.deleteById(id);
     }
 
-    // Check this
-    public Task updateTaskTest(Task task) {
-        return taskRepository.save(task);
+    public void saveTasks(List<Task> tasks) {
+        taskRepository.saveAll(tasks);
+
     }
 
-    public Task updateTask(Long id, Task updateTask) {
-        return taskRepository.findById(id)
-                .map(task -> {
-                    task.setTitle(updateTask.getTitle());
-                    task.setDescription(updateTask.getDescription());
-                    task.setStatus(updateTask.getStatus());
-                    return taskRepository.save(task);
-                })
-                .orElseThrow(() -> new RuntimeException("Task not found"));
+    public List<Task> getTasksByEmployee(Employee employee) {
+        return taskRepository.findByEmployee(employee);
     }
 
+    public void updateTaskStatus(Long taskId, String status) {
+        Task task = getTaskById(taskId);
+        task.setStatus(status);
+        taskRepository.save(task);
+    }
 }

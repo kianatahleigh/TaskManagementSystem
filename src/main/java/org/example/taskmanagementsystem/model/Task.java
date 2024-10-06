@@ -1,14 +1,12 @@
 package org.example.taskmanagementsystem.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 
-@Data
-@Entity
 
+
+@Entity
+@Data
 public class Task {
 
     @Id
@@ -16,9 +14,12 @@ public class Task {
     private Long id;
 
     private String title;
-
     private String description;
 
-    private String status;
+    @ManyToOne
+    @JoinColumn(name = "employee_id")
+    private Employee employee;
 
+    private String status;
 }
+
